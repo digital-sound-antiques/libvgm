@@ -6,10 +6,6 @@
 #include "../snddef.h"
 #include "emutypes.h"
 
-#define EMU2149_VOL_DEFAULT 1
-#define EMU2149_VOL_YM2149 0
-#define EMU2149_VOL_AY_3_8910 1
-
 #define EPSG_MASK_CH(x) (1<<(x))
 
 #ifdef __cplusplus
@@ -27,7 +23,9 @@ extern "C"
     uint8_t reg[0x20];
     //int32_t out;
 
-    uint32_t clk, rate, base_incr, quality;
+    uint32_t clk, rate, base_incr;
+    uint8_t quality;
+    uint8_t clk_div;
 
     uint16_t count[3];
     uint8_t volume[3];
@@ -41,7 +39,6 @@ extern "C"
 
     uint32_t base_count;
 
-    //uint8_t env_volume;
     uint8_t env_ptr;
     uint8_t env_face;
 
@@ -50,12 +47,12 @@ extern "C"
     uint8_t env_alternate;
     uint8_t env_hold;
     uint8_t env_pause;
-    //uint8_t env_reset;
-
-    uint32_t env_freq;
+ 
+    uint16_t env_freq;
     uint32_t env_count;
 
     uint32_t noise_seed;
+    uint8_t noise_scaler;
     uint8_t noise_count;
     uint8_t noise_freq;
 
@@ -63,6 +60,9 @@ extern "C"
     uint32_t realstep;
     uint32_t psgtime;
     uint32_t psgstep;
+
+    uint32_t freq_limit;
+
     //int32_t prev, next;
     int32_t sprev[2], snext[2];
     int32_t pan[3][2];
@@ -78,9 +78,10 @@ extern "C"
     uint8_t pcm3ch_detect;
   } EPSG;
 
-  void EPSG_set_quality (EPSG * psg, uint32_t q);
-  void EPSG_set_clock(EPSG * psg, UINT32 c);
-  void EPSG_set_rate (EPSG * psg, UINT32 r);
+  void EPSG_setQuality (EPSG * psg, UINT8 q);
+  void EPSG_setClock(EPSG * psg, UINT32 c);
+  void EPSG_setClockDivider(EPSG * psg, UINT8 enable);
+  void EPSG_setRate (EPSG * psg, UINT32 r);
   static UINT8 device_start_ay8910_emu(const AY8910_CFG* cfg, DEV_INFO* retDevInf);
   EPSG *EPSG_new (UINT32 clk, UINT32 rate);
   void EPSG_reset (EPSG *);
